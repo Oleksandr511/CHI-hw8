@@ -1,39 +1,70 @@
-import { Provider, useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Home from "./layouts/HomePage";
-import { Navigate } from "react-router-dom";
 import { RootState } from "./store/store";
 import LoginPage from "./layouts/LoginPage";
+import RegisterPage from "./layouts/RegisterPage";
+import StipePage from "./layouts/StipePage";
+import "./App.css";
+import NewPost from "./layouts/NewPost";
+import Post from "./components/Post";
 
 function ProtectedRoute({
   children,
   isAllowed,
 }: {
-  children: React.ReactNode;
+  children: React.ReactElement;
   isAllowed: boolean;
 }) {
-  console.log('here2')
-  if (!isAllowed) {
-    console.log("Redirecting to login");
-    return <Navigate to="/login" replace />;
+  console.log("isAllowed", isAllowed);
+  if (isAllowed === false) {
+    console.log("Navigate");
+    return <Navigate replace to="/login" />;
   }
+  console.log("children", children);
   return children;
 }
 
 function App() {
   const isLogged = useSelector((state: RootState) => state.user.isLogged);
+  console.log("l2", isLogged);
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/home"
           element={
             <ProtectedRoute isAllowed={isLogged}>
               <Home />
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/new-post"
+          element={
+            <ProtectedRoute isAllowed={isLogged}>
+              <NewPost />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <ProtectedRoute isAllowed={!isLogged}>
+              <LoginPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute isAllowed={!isLogged}>
+              <RegisterPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/" element={<StipePage />} />
+        <Route path="/post/:id" element={<Post />} />
       </Routes>
     </BrowserRouter>
   );
