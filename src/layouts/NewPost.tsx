@@ -2,6 +2,7 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { createExhibit } from "../api/exhibitActions";
 import { useNavigate } from "react-router-dom";
+import BackupIcon from "@mui/icons-material/Backup";
 
 type ExhibitInputs = {
   description: string;
@@ -19,7 +20,7 @@ export default function NewPost() {
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
     reset,
   } = useForm<ExhibitInputs>({ mode: "onChange" });
   const onSubmit: SubmitHandler<ExhibitInputs> = async (data) => {
@@ -39,23 +40,43 @@ export default function NewPost() {
     }
   };
   return (
-    <div>
+    <div style={{ paddingTop: "20px", height: "90vh", width: "500px" }}>
       <h1>Create new post</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
           type="text"
           placeholder="Description"
-          {...register("description", { required: true })}
+          {...register("description", { required: "Description is required" })}
         />
+        {errors?.description && (
+          <div style={{ color: "red" }}>{errors?.description.message}</div>
+        )}
         <input
           type="file"
           accept="image/*"
-          {...register("file", { required: true })}
+          {...register("file", { required: "Image is required" })}
           placeholder="upload image"
           onChange={handleFileChange}
         />
-        <button type="submit">Submit</button>
+        {errors?.file && (
+          <div style={{ color: "red" }}>{errors?.file.message}</div>
+        )}
+        <button style={styles.submit_btn} type="submit">
+          <BackupIcon />
+        </button>
       </form>
     </div>
   );
 }
+
+const styles = {
+  submit_btn: {
+    marginTop: "10px",
+    padding: "10px",
+    backgroundColor: "grey",
+    color: "white",
+    borderRadius: "5px",
+    border: "none",
+    cursor: "pointer",
+  },
+};

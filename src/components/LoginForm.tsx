@@ -1,6 +1,6 @@
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import "../style.css";
+import "../styles/style.css";
 import { useDispatch } from "react-redux";
 import { loginUserStore } from "../store/slices/userSlice";
 import type { AppDispatch } from "../store/store";

@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../api/userActions";
-import { useEffect } from "react";
-export const registerUser = createAsyncThunk(
-  "user/register",
-  async (userData) => {
-    // return await register(userData);
-  }
-);
+
+// export const registerUser = createAsyncThunk(
+//   "user/register",
+//   async (userData) => {
+//     // return await register(userData);
+//   }
+// );
 
 export const loginUserStore = createAsyncThunk(
   "user/login",
@@ -27,13 +27,23 @@ export const loginUserStore = createAsyncThunk(
   }
 );
 
+interface UserState {
+  user: null | { username: string; userId: string };
+  isLogged: boolean;
+  status: string;
+  error: string | null;
+}
+
+const initialState: UserState = {
+  user: null,
+  isLogged: false,
+  status: "idle",
+  error: null,
+};
+
 export const userSlice = createSlice({
   name: "user",
-  initialState: {
-    user: null,
-    isLogged: false,
-    status: "idle",
-  },
+  initialState,
 
   reducers: {
     loginSuccess: (state, action) => {
@@ -58,13 +68,12 @@ export const userSlice = createSlice({
       .addCase(loginUserStore.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(loginUserStore.fulfilled, (state, action) => {
+      .addCase(loginUserStore.fulfilled, (state) => {
         state.status = "succeeded";
-        // state.user = action.payload;
       })
       .addCase(loginUserStore.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.error.message || "Something went wrong";
       });
   },
 });

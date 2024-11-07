@@ -1,5 +1,5 @@
 import axios from "axios";
-import { history } from "../navigate";
+// import { history } from "../navigate";
 
 export const axiosInstance = axios.create({
   baseURL: "http://ec2-13-49-67-34.eu-north-1.compute.amazonaws.com/",
@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use(
       // Удаляем токен
       localStorage.removeItem("token");
       // Редирект на страницу логина
-      history.push("/login");
+      // history.push("/login");
     }
     return Promise.reject(error);
   }

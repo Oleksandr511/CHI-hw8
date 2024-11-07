@@ -26,3 +26,12 @@ export async function loginUser(username: string, password: string) {
     console.log(err);
   }
 }
+
+export async function getUserProfile (){
+  try {
+    const response = await axiosInstance.get("/users/my-profile");
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+}

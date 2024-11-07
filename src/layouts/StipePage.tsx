@@ -1,44 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { getAllExhibits } from "../api/exhibitActions";
-import { BASE_URL } from "../config";
 import { Pagination } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { Exhibit } from "../types/exhibitTypes";
-
-// interface User {
-//   id: string;
-//   username: string;
-// }
-
-// interface Exhibit extends User {
-//   id: string;
-//   imageUrl: string;
-//   description: string;
-//   commentCount: number;
-//   user: User;
-// }
+import { Exhibit } from "../interface/exhibit";
+import { handleCardClick } from "../utils";
+import { useRequest } from "ahooks";
+import loadingGif from "../assets/loading-gif.gif";
 
 export default function StripePage() {
   const [exhibits, setExhibits] = useState([]);
-  const [lastPage, setLastPage] = useState(0);
+  const [lastPage, setLastPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [isExpanded, setIsExpanded] = useState<{ [key: string]: boolean }>({});
   const MAX_LENGTH = 100;
   const navigate = useNavigate();
 
+  const { loading, error, run } = useRequest(
+    () => getAllExhibits(currentPage.toString()),
+    {
+      onSuccess: (res) => {
+        setLastPage(res.lastPage);
+        setExhibits(res.data);
+      },
+    }
+  );
   useEffect(() => {
-    const getExhibits = async () => {
-      try {
-        const { data, lastPage } = await getAllExhibits(currentPage.toString());
-        setLastPage(lastPage);
-        setExhibits(data);
-        console.log(data, lastPage);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getExhibits();
-  }, [currentPage]);
+    run();
+  }, [currentPage, run]);
 
   const handleExpandClick = (id: string) => {
     setIsExpanded((prev) => ({
@@ -47,31 +35,23 @@ export default function StripePage() {
     }));
   };
 
-  const handleCardClick = (e, id: string) => {
-    const target = e.target as HTMLDivElement;
-    if (target.tagName === "BUTTON") return;
-
-    console.log("target", target);
-    console.log("target id", id);
-    navigate(`/post/${id}`);
-  };
-
-  return (
+  return loading ? (
+    <img src={loadingGif} alt="gif" />
+  ) : error ? (
+    <div>Error</div>
+  ) : (
     <div style={styles.container}>
       <h1 style={styles.title}>Exhibits</h1>
-      <Link to="/home">Home</Link>
-      <br />
-      <Link to="/new-post">New post</Link>
       <div style={styles.gridContainer}>
         {exhibits.map((exhibit: Exhibit) => (
           <div
-            onClick={(e) => handleCardClick(e, exhibit.id)}
+            onClick={(e) => handleCardClick(e, exhibit.id, navigate)}
             key={exhibit.id}
             style={styles.card}
           >
             <img
               style={styles.image}
-              src={BASE_URL + exhibit.imageUrl}
+              src={import.meta.env.VITE_BASE_URL + exhibit.imageUrl}
               alt={exhibit.imageUrl}
             />
             <p style={styles.description}>
@@ -93,9 +73,13 @@ export default function StripePage() {
         ))}
       </div>
       <Pagination
-        onChange={(e, page) => setCurrentPage(page)}
+        onChange={(e, page) => {
+          setCurrentPage(page);
+        }}
+        page={currentPage}
         style={{ marginTop: "10px" }}
         hidePrevButton
+        hideNextButton
         count={lastPage}
         color="primary"
         variant="outlined"

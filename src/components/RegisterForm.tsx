@@ -1,6 +1,6 @@
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import "../style.css";
+import "../styles/style.css";
 import { createUser } from "../api/userActions";
 
 type Inputs = {

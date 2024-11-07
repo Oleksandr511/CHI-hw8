@@ -1,32 +1,39 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { getUserExhibits } from "../api/exhibitActions";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Exhibit } from "../types/exhibitTypes";
-import { BASE_URL } from "../config";
+import { Exhibit } from "../interface/exhibit";
+import { handleCardClick } from "../utils";
+import { useRequest } from "ahooks";
+import loadingGif from "../assets/loading-gif.gif";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [exhibits, setExhibits] = React.useState([]);
-  useEffect(() => {
-    const getExhibits = async () => {
-      const res = await getUserExhibits();
+
+  const { loading, error } = useRequest(getUserExhibits, {
+    onSuccess: (res) => {
       setExhibits(res.data);
-      console.log(res.data);
-    };
-    getExhibits();
-  }, []);
-  return (
-    <div>
+    },
+  });
+  return loading ? (
+    <img src={loadingGif} alt="gif" />
+  ) : error ? (
+    <div>Error</div>
+  ) : (
+    <div style={{ paddingTop: "20px", height: "100%" }}>
       <h1>Home Page</h1>
-      <Link to="/login">Login</Link>
       <Link to="/new-post">New post</Link>
       {exhibits.map((exhibit: Exhibit) => {
         return (
-          <div style={styles.card} key={exhibit.id}>
+          <div
+            onClick={(e) => handleCardClick(e, exhibit.id, navigate)}
+            style={styles.card}
+            key={exhibit.id}
+          >
             <img
               style={styles.card_img}
-              src={BASE_URL + exhibit.imageUrl}
+              src={import.meta.env.VITE_BASE_URL + exhibit.imageUrl}
               alt={exhibit.imageUrl}
             />
             <p>{exhibit.description}</p>
