@@ -29,10 +29,10 @@ export default function NewPost() {
         console.log("No file selected");
         return;
       }
-      console.log("data", data);
-      console.log("file", file);
-      const response = await createExhibit(data.description, file);
-      console.log(response);
+      // console.log("data", data);
+      // console.log("file", file);
+      await createExhibit(data.description, file);
+      // console.log(response);
       navigate("/");
       reset();
     } catch (err) {
@@ -72,11 +72,12 @@ export default function NewPost() {
 const styles = {
   submit_btn: {
     marginTop: "10px",
-    padding: "10px",
+    padding: "7px",
     backgroundColor: "grey",
     color: "white",
     borderRadius: "5px",
     border: "none",
     cursor: "pointer",
+    // float: "right",
   },
 };

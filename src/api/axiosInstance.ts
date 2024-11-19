@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
 
 // Добавление interceptor для ответов
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => response.data,
   (error) => {
     if (error.response && error.response.status === 401) {
       // Удаляем токен

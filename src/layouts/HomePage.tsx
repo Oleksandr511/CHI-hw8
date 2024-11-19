@@ -17,11 +17,11 @@ export default function HomePage() {
     },
   });
   return loading ? (
-    <img src={loadingGif} alt="gif" />
+    <img style={{ height: "100vh" }} src={loadingGif} alt="gif" />
   ) : error ? (
     <div>Error</div>
   ) : (
-    <div style={{ paddingTop: "20px", height: "100%" }}>
+    <div style={{ paddingTop: "20px", height: "100vh" }}>
       <h1>Home Page</h1>
       <Link to="/new-post">New post</Link>
       {exhibits.map((exhibit: Exhibit) => {

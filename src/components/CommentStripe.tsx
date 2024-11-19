@@ -1,26 +1,26 @@
 import React from "react";
 import { useRequest } from "ahooks";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getCommentsByExhibitId } from "../api/commentActions";
 import { Comment as CommentInterface } from "../interface/comment";
 import Comment from "./Comment";
 import NewComment from "../layouts/NewComment";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import loadingGif from "../assets/loading-gif.gif";
 
 export default function CommentStripe() {
   const isLogged = useSelector((state: RootState) => state.user.isLogged);
 
   const [comments, setComments] = React.useState<CommentInterface[]>([]);
   const { id } = useParams();
-  const { loading, error } = useRequest(
+  const { loading, error, run } = useRequest(
     async () => {
       if (id) return await getCommentsByExhibitId(id);
       return Promise.reject("No id");
     },
     {
       onSuccess: (res) => {
-        console.log("res", res);
         setComments(res);
       },
       onError: (err) => {
@@ -29,12 +29,22 @@ export default function CommentStripe() {
     }
   );
 
-  return (
+  const handleChange = () => {
+    run();
+  };
+
+  return loading ? (
+    <img style={{ width: "100%", margin: "auto" }} src={loadingGif} alt="gif" />
+  ) : error ? (
+    <div>Error</div>
+  ) : (
     <div>
       {isLogged ? (
-        <NewComment />
+        <NewComment update={handleChange} />
       ) : (
-        <p style={{ color: "#dd7e8e" }}>Login to add comments</p>
+        <Link style={{ margin: "15px" }} to="/login">
+          Login to add comments
+        </Link>
       )}
       {comments.length === 0 ? null : (
         <div style={styles.container}>
@@ -47,7 +57,7 @@ export default function CommentStripe() {
             <div style={styles.commentList}>
               {comments.map((comment) => (
                 <div key={comment.id}>
-                  <Comment comment={comment} />
+                  <Comment update={handleChange} comment={comment} />
                 </div>
               ))}
             </div>

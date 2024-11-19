@@ -30,7 +30,6 @@ function ProtectedRoute({
 function App() {
   const isLogged = useSelector((state: RootState) => state.user.isLogged);
 
-
   return (
     <div className="appContainer">
       <BrowserRouter>

@@ -6,19 +6,21 @@ import { useParams } from "react-router-dom";
 import SendIcon from "@mui/icons-material/Send";
 import styles from "../styles/newComment.module.css";
 
-export default function NewComment() {
+export default function NewComment({ update }: { update: () => void }) {
   const { id } = useParams();
   // const [refresh, setRefresh] = React.useState(false);
 
   const { run } = useRequest(
     async (id: string | undefined, text: string) => {
-      if (!id) return Promise.reject("No id");
+      console.log('creating comment')
+      if (!id || text.length === 0) return Promise.reject("No id");
       const response = await postComment(id, text);
       console.log("r", response);
     },
     {
       onSuccess: (res) => {
         console.log(res);
+        update();
         // setRefresh((prev) => !prev);
       },
 

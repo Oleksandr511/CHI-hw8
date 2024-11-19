@@ -20,8 +20,6 @@ export default function Post() {
   const [exhibit, setExhibit] = React.useState<Exhibit>();
   const { id } = useParams<Params>();
   const isLogged = useSelector((state: RootState) => state.user.isLogged);
-  console.log("ll", isLogged);
-  console.log("comments count", exhibit?.commentCount);
   const { data } = useRequest(
     () => {
       if (isLogged) return getUserProfile();
@@ -43,7 +41,7 @@ export default function Post() {
     },
     {
       onSuccess: (res) => {
-        console.log(res);
+        console.log("post: ", res);
         setExhibit(res);
         console.log("d", data?.id);
       },
@@ -82,8 +80,10 @@ export default function Post() {
           />
           <div className={styles.card_description}>
             <p>{exhibit?.description}</p>
-            <p style={{color: "grey"}}>{exhibit?.user.username}</p>
-            <p style={{color: "#b5afb0"}}>comments: {exhibit?.commentCount}</p>
+            <p style={{ color: "grey" }}>{exhibit?.user.username}</p>
+            <p style={{ color: "#b5afb0" }}>
+              comments: {exhibit?.commentCount}
+            </p>
             <div>
               {data?.id === exhibit?.user.id ? (
                 <button className={styles.deleteBtn} onClick={handleDeleteBtn}>

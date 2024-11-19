@@ -1,4 +1,3 @@
-import axios from "axios";
 import { axiosInstance } from "./axiosInstance";
 
 export function createUser(username: string, password: string) {
@@ -21,7 +20,7 @@ export async function loginUser(username: string, password: string) {
       username,
       password,
     });
-    return response.data;
+    return response;
   } catch (err) {
     console.log(err);
   }
@@ -30,7 +29,7 @@ export async function loginUser(username: string, password: string) {
 export async function getUserProfile (){
   try {
     const response = await axiosInstance.get("/users/my-profile");
-    return response.data;
+    return response;
   } catch (err) {
     console.log(err);
   }

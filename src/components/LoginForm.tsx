@@ -51,7 +51,14 @@ export default function LoginForm() {
         )}
         <div className="form-input">
           <input
-            {...register("password", { required: "Password is required" })}
+            {...register("password", {
+              required: "Password is required",
+              validate: {
+                minLength: (value) =>
+                  value.length >= 4 ||
+                  "Password must be at least 4 characters long",
+              },
+            })}
             type="password"
             placeholder="Password"
           />

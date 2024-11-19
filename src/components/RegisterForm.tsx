@@ -2,6 +2,7 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import "../styles/style.css";
 import { createUser } from "../api/userActions";
+import { useNavigate } from "react-router-dom";
 
 type Inputs = {
   username: string;
@@ -9,6 +10,7 @@ type Inputs = {
 };
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -17,6 +19,7 @@ export default function RegisterForm() {
   } = useForm<Inputs>({ mode: "onChange" });
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     createUser(data.username, data.password);
+    navigate("/login");
     reset();
   };
   return (
@@ -36,7 +39,14 @@ export default function RegisterForm() {
         )}
         <div className="form-input">
           <input
-            {...register("password", { required: "Password is required" })}
+            {...register("password", {
+              required: "Password is required",
+              validate: {
+                minLength: (value) =>
+                  value.length >= 4 ||
+                  "Password must be at least 4 characters long",
+              },
+            })}
             type="password"
             placeholder="Password"
           />

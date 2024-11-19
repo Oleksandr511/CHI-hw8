@@ -1,13 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { loginUser } from "../../api/userActions";
 
-// export const registerUser = createAsyncThunk(
-//   "user/register",
-//   async (userData) => {
-//     // return await register(userData);
-//   }
-// );
-
 export const loginUserStore = createAsyncThunk(
   "user/login",
   async (
@@ -16,7 +9,7 @@ export const loginUserStore = createAsyncThunk(
   ) => {
     try {
       const response = await loginUser(username, password);
-      if (response.access_token) {
+      if (response && response.access_token) {
         dispatch(loginSuccess(response));
         localStorage.setItem("token", response.access_token);
         return response;
@@ -49,17 +42,14 @@ export const userSlice = createSlice({
     loginSuccess: (state, action) => {
       state.user = action.payload;
       state.isLogged = true;
-      console.log("l", state.isLogged);
     },
     login: (state, action) => {
       state.user = action.payload;
       state.isLogged = true;
-      console.log("l", state.isLogged);
     },
     logout: (state) => {
       state.user = null;
       state.isLogged = false;
-      console.log("l", state.isLogged);
       localStorage.removeItem("token");
     },
   },
